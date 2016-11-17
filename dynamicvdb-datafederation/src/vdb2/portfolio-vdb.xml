@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<vdb name="Portfolio" version="1">
+
+    <description>The Portfolio Dynamic VDB</description>
+    
+    <!-- 
+      Setting to use connector supplied metadata. Can be "true" or "cached".  
+      "true" will obtain metadata once for every launch of Teiid. 
+      "cached" will save a file containing the metadata into 
+      the deploy/<vdb name>/<vdb version/META-INF directory
+    -->
+    <property name="UseConnectorMetadata" value="true" />
+
+
+    
+   <model name="PersonalValuations">
+        <property name="importer.headerRowNumber" value="1"/>
+        <property name="importer.ExcelFileName" value="otherholdings.xls"/>
+        <source name="excelconnector" translator-name="excel"  connection-jndi-name="java:/excel-file"/>
+        <metadata type="DDL"><![CDATA[
+
+SET NAMESPACE 'http://www.teiid.org/translator/excel/2014' AS teiid_excel;
+
+CREATE FOREIGN TABLE Sheet1 (
+	ROW_ID integer OPTIONS (SEARCHABLE 'All_Except_Like', "teiid_excel:CELL_NUMBER" 'ROW_ID'),
+	ACCOUNT_ID integer OPTIONS (SEARCHABLE 'Unsearchable', "teiid_excel:CELL_NUMBER" '1'),
+	PRODUCT_TYPE string OPTIONS (SEARCHABLE 'Unsearchable', "teiid_excel:CELL_NUMBER" '2'),
+	PRODUCT_VALUE string OPTIONS (SEARCHABLE 'Unsearchable', "teiid_excel:CELL_NUMBER" '3'),
+	CONSTRAINT PK0 PRIMARY KEY(ROW_ID)
+) OPTIONS ("teiid_excel:FILE" 'otherholdings.xls', "teiid_excel:FIRST_DATA_ROW_NUMBER" '2');
+    
+         ]]> </metadata>
+    </model>
+
+</vdb>
